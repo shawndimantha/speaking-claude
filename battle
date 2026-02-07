@@ -1,0 +1,31 @@
+#!/bin/bash
+# Battle Royale - 3 AI agents compete on the same task
+#
+# Usage: battle "create a landing page for a coffee shop"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PYTHON="/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9"
+
+# Check for API key
+if [ -z "$CARTESIA_API_KEY" ]; then
+    echo "Error: CARTESIA_API_KEY not set"
+    echo "Run: export CARTESIA_API_KEY='your-key'"
+    exit 1
+fi
+
+if [ $# -eq 0 ]; then
+    echo "🏆 BATTLE ROYALE - AI Agent Competition"
+    echo ""
+    echo "Usage:"
+    echo "  battle \"<task description>\"   Run a 3-agent competition"
+    echo "  battle --demo                  Test all competitor voices"
+    echo ""
+    echo "Examples:"
+    echo "  battle \"create a landing page for a coffee shop\""
+    echo "  battle \"build a todo app with local storage\""
+    echo "  battle \"make a portfolio website for a photographer\""
+    exit 0
+fi
+
+cd "$SCRIPT_DIR"
+exec "$PYTHON" battle_royale.py "$@"

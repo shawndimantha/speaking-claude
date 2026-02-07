@@ -1,0 +1,19 @@
+#!/bin/bash
+# Speaking Claude - Wrapper that adds TTS narration to Claude Code
+#
+# Usage: speaking-claude "your prompt here"
+#    or: speaking-claude  (interactive mode coming soon)
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PYTHON="/Library/Frameworks/Python.framework/Versions/3.9/bin/python3.9"
+
+# Check for API key
+if [ -z "$CARTESIA_API_KEY" ]; then
+    echo "Error: CARTESIA_API_KEY not set"
+    echo "Run: export CARTESIA_API_KEY='your-key'"
+    exit 1
+fi
+
+# Run speaking claude
+cd "$SCRIPT_DIR"
+exec "$PYTHON" speaking_claude.py "$@"
