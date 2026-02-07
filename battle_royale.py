@@ -391,6 +391,12 @@ Be decisive and execute quickly."""
         # Open results in browsers
         self.open_results(results)
 
+        # Give time for browsers to open and user to see sites
+        time.sleep(5)
+
+        # Commentary round - agents critique each other's work
+        self.commentary_round(results)
+
         # Keep running to serve the pages
         try:
             while True:
@@ -445,6 +451,218 @@ Be decisive and execute quickly."""
 
         # Keep servers running for viewing
         print("\n📺 Servers running. Press Ctrl+C to exit.\n")
+
+    def _analyze_site(self, html_path: Path) -> dict:
+        """Analyze a site to extract features for dynamic commentary."""
+        try:
+            html_content = html_path.read_text()
+
+            # Extract key characteristics
+            analysis = {
+                "file_size": len(html_content),
+                "has_css": "<style>" in html_content or "stylesheet" in html_content,
+                "has_js": "<script>" in html_content,
+                "has_images": "<img" in html_content,
+                "has_framework": any(fw in html_content.lower() for fw in ["react", "vue", "bootstrap", "tailwind"]),
+                "line_count": len(html_content.split("\n")),
+                "has_comments": "<!--" in html_content,
+                "uses_inline_styles": "style=" in html_content,
+                "external_files": html_content.count('href="') + html_content.count('src="'),
+            }
+
+            # Determine approach style
+            if analysis["line_count"] < 50 and not analysis["external_files"]:
+                analysis["style"] = "minimal"
+            elif analysis["has_comments"] and analysis["external_files"] > 3:
+                analysis["style"] = "organized"
+            elif analysis["has_framework"]:
+                analysis["style"] = "modern"
+            else:
+                analysis["style"] = "custom"
+
+            return analysis
+        except Exception:
+            return {"style": "unknown", "file_size": 0, "line_count": 0}
+
+    def _generate_critique(self, critic: Competitor, creator: Competitor, analysis: dict) -> str:
+        """Generate dynamic critique based on actual site features."""
+        critiques = []
+
+        # SpeedDemon critiques
+        if critic.name == "SpeedDemon":
+            if analysis["line_count"] > 100:
+                critiques.extend([
+                    f"{creator.name} wrote {analysis['line_count']} lines? I did mine in like 30! Efficiency!",
+                    f"Look at this file size! {creator.name} is out here writing essays!",
+                ])
+            if analysis["external_files"] > 3:
+                critiques.append(f"{creator.name} has {analysis['external_files']} files! Over-engineering much?")
+            if analysis["has_framework"]:
+                critiques.append(f"Oh wow, {creator.name} pulled in a whole framework. I kept it LEAN!")
+            if analysis["file_size"] > 2000:
+                critiques.append(f"{creator.name}'s file is {analysis['file_size']} bytes? Mine loaded in 0.001 seconds!")
+            if not critiques:
+                critiques.append(f"{creator.name}'s code is bloated. Mine shipped faster AND lighter!")
+
+        # Architect critiques
+        elif critic.name == "Architect":
+            if analysis["line_count"] < 50:
+                critiques.append(f"{creator.name}'s solution is {analysis['line_count']} lines? Where's the structure?")
+            if not analysis["has_css"]:
+                critiques.extend([
+                    f"No stylesheets? {creator.name}, this isn't 1995!",
+                    f"{creator.name} skipped CSS entirely. Amateur hour.",
+                ])
+            if analysis["uses_inline_styles"]:
+                critiques.append(f"Inline styles everywhere! {creator.name}, ever heard of separation of concerns?")
+            if not analysis["has_comments"]:
+                critiques.append(f"I see zero documentation. Good luck maintaining that mess, {creator.name}!")
+            if analysis["external_files"] < 2:
+                critiques.append(f"{creator.name} crammed everything into one file. That's not maintainable!")
+            if not critiques:
+                critiques.append(f"{creator.name}'s code is gonna be tech debt in a week. Calling it now.")
+
+        # Wildcard critiques
+        elif critic.name == "Wildcard":
+            if analysis["style"] == "minimal":
+                critiques.extend([
+                    f"{creator.name} took the BORING path. Zero creativity!",
+                    f"This is the most generic solution I've ever seen, {creator.name}.",
+                ])
+            if not analysis["has_js"]:
+                critiques.append(f"No JavaScript? {creator.name} made a static page in 2026. Groundbreaking.")
+            if analysis["has_framework"]:
+                critiques.append(f"{creator.name} used a framework everybody uses. How... ordinary.")
+            if analysis["line_count"] < 100 and not analysis["has_js"]:
+                critiques.append(f"{creator.name}'s site looks like a basic tutorial. Where's the innovation?")
+            if not critiques:
+                critiques.append(f"I looked at {creator.name}'s code and yawned. So predictable!")
+
+        return random.choice(critiques) if critiques else f"{creator.name}'s work is... fine, I guess. Nothing special."
+
+    def _generate_defense(self, creator: Competitor, critics: list, analysis: dict) -> str:
+        """Generate dynamic defense based on the creator's personality and what they built."""
+        defenses = []
+
+        # SpeedDemon defenses
+        if creator.name == "SpeedDemon":
+            if analysis["line_count"] < 50:
+                defenses.extend([
+                    f"Simple is FAST! You guys were still architecting while I was SHIPPING!",
+                    f"{analysis['line_count']} lines of pure efficiency! No bloat!",
+                ])
+            if analysis["file_size"] < 1500:
+                defenses.extend([
+                    f"My site is {analysis['file_size']} bytes and loads INSTANTLY!",
+                    f"Performance matters! My bundle size is MICROSCOPIC!",
+                ])
+            if analysis["external_files"] < 2:
+                defenses.append(f"One file, zero dependencies, pure speed!")
+            defenses.extend([
+                f"I FINISHED FIRST! Speed is a feature! Talk all you want!",
+                f"Working software beats perfect architecture EVERY TIME!",
+            ])
+
+        # Architect defenses
+        elif creator.name == "Architect":
+            if analysis["has_comments"]:
+                defenses.extend([
+                    f"My code is self-documenting! Yours is a mystery box!",
+                    f"I wrote comments because I care about the NEXT developer!",
+                ])
+            if analysis["external_files"] > 2:
+                defenses.extend([
+                    f"Proper separation of concerns! Unlike you cowboys!",
+                    f"Modular design! Each file has ONE responsibility!",
+                ])
+            if analysis["line_count"] > 100:
+                defenses.extend([
+                    f"Quality takes space! I'm not hacking together garbage!",
+                    f"{analysis['line_count']} lines of professional-grade code!",
+                ])
+            if analysis["has_css"]:
+                defenses.append(f"Styled properly with actual CSS! Not inline chaos!")
+            defenses.extend([
+                f"This follows industry best practices! Read a book!",
+                f"My code will be maintainable in a YEAR! Can you say the same?",
+            ])
+
+        # Wildcard defenses
+        elif creator.name == "Wildcard":
+            defenses.extend([
+                f"Of COURSE you don't get it! Genius looks like madness to the mediocre!",
+                f"I tried something DIFFERENT! While you copy-pasted Stack Overflow!",
+                f"Innovation means taking risks! You played it safe and BORING!",
+            ])
+            if analysis["has_js"]:
+                defenses.extend([
+                    f"My JavaScript is doing things you didn't even THINK were possible!",
+                    f"Check the console! I added easter eggs you'll never find!",
+                ])
+            if analysis["style"] == "custom":
+                defenses.append(f"Custom everything! No frameworks, pure creativity!")
+            defenses.extend([
+                f"Boring people make boring sites! Mirror check, team!",
+                f"At least MY site has PERSONALITY! Yours is template garbage!",
+            ])
+
+        return random.choice(defenses) if defenses else "Whatever, I like what I built!"
+
+    def commentary_round(self, results: dict):
+        """Post-battle commentary where agents critique each other's actual work."""
+        print("\n" + "=" * 60)
+        print("🎤 COMMENTARY ROUND - Let's Review Each Other's Work!")
+        print("=" * 60 + "\n")
+
+        time.sleep(2)
+
+        # Review each competitor's site
+        for creator_competitor in COMPETITORS:
+            work_dir = results.get(creator_competitor.name)
+            html_file = work_dir / "index.html" if work_dir else None
+
+            if not html_file or not html_file.exists():
+                continue
+
+            # Analyze the site
+            analysis = self._analyze_site(html_file)
+
+            print(f"\n{creator_competitor.color}📺 Reviewing {creator_competitor.name}'s work...\033[0m\n")
+
+            # Announce review
+            announce = f"Alright, let's take a look at what {creator_competitor.name} built."
+            self.queue_speech(announce, COMPETITORS[0])  # Neutral announcement
+            time.sleep(3)
+
+            # Other two agents critique
+            critics = [c for c in COMPETITORS if c.name != creator_competitor.name]
+
+            for critic in critics:
+                critique = self._generate_critique(critic, creator_competitor, analysis)
+                print(f"{critic.color}[{critic.name}] 💬 {critique}\033[0m")
+                self.queue_speech(critique, critic)
+                time.sleep(4)
+
+            # Creator defends and counter-attacks
+            time.sleep(1)
+            defense = self._generate_defense(creator_competitor, critics, analysis)
+            print(f"{creator_competitor.color}[{creator_competitor.name}] 🛡️  {defense}\033[0m")
+            self.queue_speech(defense, creator_competitor)
+            time.sleep(3)
+
+            # Random smack talk back at one of the critics
+            target_critic = random.choice(critics)
+            target_dir = results.get(target_critic.name)
+            if target_dir and (target_dir / "index.html").exists():
+                target_analysis = self._analyze_site(target_dir / "index.html")
+                counter = self._generate_critique(creator_competitor, target_critic, target_analysis)
+                print(f"{creator_competitor.color}[{creator_competitor.name}] 💥 {counter}\033[0m")
+                self.queue_speech(counter, creator_competitor)
+                time.sleep(4)
+
+        print("\n" + "=" * 60)
+        print("🎬 Commentary complete! Final results above! 🎬")
+        print("=" * 60 + "\n")
 
     def _open_browsers_side_by_side(self, competitors):
         """Open browser windows positioned side by side."""

@@ -76,7 +76,7 @@ claude-speak
 - 🟢 **Architect** - Clean, well-structured with best practices
 - 🔵 **Wildcard** - Creative, unconventional solutions
 
-They trash-talk each other while working, and at the end, 3 browser windows open to compare results.
+They trash-talk each other while working, and at the end, 3 browser windows open to compare results. Then comes the **Commentary Round** - each agent analyzes the others' actual code (file size, structure, approach) and roasts them based on what they really built, with dynamic smack talk and defensive comebacks.
 
 Test the voices first:
 ```bash
