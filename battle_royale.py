@@ -391,8 +391,14 @@ Be decisive and execute quickly."""
         # Open results in browsers
         self.open_results(results)
 
+        # Keep running to serve the pages
+        try:
+            while True:
+                time.sleep(1)
+        except KeyboardInterrupt:
+            print("\n\n👋 Shutting down...")
+
         # Cleanup
-        time.sleep(5)
         self._running = False
         self._audio_thread.join(timeout=1)
         self._stream.stop_stream()
@@ -400,35 +406,80 @@ Be decisive and execute quickly."""
         self._audio.terminate()
 
     def open_results(self, results: dict):
-        """Open each result in a browser."""
+        """Open each result in a browser with side-by-side windows."""
         import http.server
         import socketserver
+        from functools import partial
 
         print("\n🌐 Opening results in browsers...\n")
 
-        servers = []
+        # Start all servers first
+        server_processes = []
+        valid_competitors = []
+
         for competitor in COMPETITORS:
             work_dir = results.get(competitor.name)
             if work_dir and (work_dir / "index.html").exists():
                 print(f"{competitor.color}  [{competitor.name}] http://localhost:{competitor.port}\033[0m")
+                valid_competitors.append((competitor, work_dir))
 
-                # Start a simple HTTP server
-                os.chdir(work_dir)
-                handler = http.server.SimpleHTTPRequestHandler
+                # Create a handler bound to this specific directory
+                handler = partial(http.server.SimpleHTTPRequestHandler, directory=str(work_dir))
 
-                def serve(port, directory):
-                    os.chdir(directory)
-                    with socketserver.TCPServer(("", port), handler) as httpd:
-                        httpd.handle_request()  # Serve one request
+                def serve(port, handler_class):
+                    with socketserver.TCPServer(("", port), handler_class) as httpd:
+                        httpd.serve_forever()
 
-                t = threading.Thread(target=serve, args=(competitor.port, work_dir), daemon=True)
+                t = threading.Thread(target=serve, args=(competitor.port, handler), daemon=True)
                 t.start()
-                servers.append(t)
-
-                # Open browser
-                subprocess.run(["open", f"http://localhost:{competitor.port}"], check=False)
+                server_processes.append(t)
             else:
                 print(f"{competitor.color}  [{competitor.name}] No index.html found\033[0m")
+
+        # Give servers a moment to start
+        time.sleep(0.5)
+
+        # Open browsers side by side using AppleScript for positioning
+        if valid_competitors:
+            self._open_browsers_side_by_side(valid_competitors)
+
+        # Keep servers running for viewing
+        print("\n📺 Servers running. Press Ctrl+C to exit.\n")
+
+    def _open_browsers_side_by_side(self, competitors):
+        """Open browser windows positioned side by side."""
+        # Get screen width (approximate for positioning)
+        num_windows = len(competitors)
+
+        # Use AppleScript to open Chrome windows side by side
+        applescript = '''
+        tell application "Google Chrome"
+            activate
+        '''
+
+        # Calculate window positions (assuming ~1440px wide screen, adjust as needed)
+        window_width = 480
+        window_height = 800
+
+        for i, (competitor, _) in enumerate(competitors):
+            x_pos = i * window_width
+            applescript += f'''
+            make new window
+            set URL of active tab of window 1 to "http://localhost:{competitor.port}"
+            set bounds of window 1 to {{{x_pos}, 50, {x_pos + window_width}, {50 + window_height}}}
+            delay 0.3
+            '''
+
+        applescript += '''
+        end tell
+        '''
+
+        try:
+            subprocess.run(["osascript", "-e", applescript], check=False, capture_output=True)
+        except Exception:
+            # Fallback: just open in default browser
+            for competitor, _ in competitors:
+                subprocess.run(["open", f"http://localhost:{competitor.port}"], check=False)
 
 
 def demo_voices():
