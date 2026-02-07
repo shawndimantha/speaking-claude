@@ -25,7 +25,7 @@ Turn Claude Code into an entertaining, voice-enabled coding companion. Agents ha
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/speaking-claude.git
+git clone https://github.com/shawndimantha/speaking-claude.git
 cd speaking-claude
 
 # Install dependencies
