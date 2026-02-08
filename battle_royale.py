@@ -79,16 +79,16 @@ COMPETITORS = [
         voice_id="498e7f37-7fa3-4e2c-b8e2-8b6e9276f956",  # Anime Fan
         port=8002,
         color="\033[93m",  # Yellow
-        intro="YOSH! The time has come to unleash my ultimate coding technique! This will be LEGENDARY!",
+        intro="YES! The time has come to unleash my ultimate coding technique! This will be LEGENDARY!",
         thinking=[
             "Calculating the optimal attack pattern...",
             "This requires my FULL POWER!",
-            "I must concentrate my coding chakra...",
-            "The protagonist never gives up! FIGHTING!",
+            "I must concentrate my coding energy...",
+            "The protagonist never gives up!",
         ],
         trash_talk=[
             "{opponent}! Your code is weaker than a filler episode!",
-            "Nani?! {opponent} calls THAT a website? Pathetic!",
+            "WHAT?! {opponent} calls THAT a website? Pathetic!",
             "{opponent} has the power level of a background character!",
             "You dare challenge ME, {opponent}?! Know your place!",
         ],
@@ -98,12 +98,12 @@ COMPETITORS = [
             "The power of friendship and clean code guides me!",
         ],
         frustrated=[
-            "KUSO! This bug... it's stronger than I thought!",
+            "DARN IT! This bug is stronger than I thought!",
             "I won't give up! A true hero never surrenders!",
         ],
         victory=[
             "VICTORY! Just as the prophecy foretold! I AM THE PROTAGONIST!",
-            "Omae wa mou... finished. My website reigns SUPREME!",
+            "It's already over! My website reigns SUPREME!",
         ],
     ),
     Competitor(
@@ -471,38 +471,28 @@ Be decisive and execute quickly."""
 
     def _generate_critique(self, critic: Competitor, creator: Competitor, html_content: str) -> str:
         """Use Claude to generate a dynamic critique based on actual HTML."""
-        prompt = f"""You are {critic.name}, an AI coding agent with this personality: {critic.approach}
+        prompt = f"""You are {critic.name}. Personality: {critic.approach}
 
-You just looked at the website that {creator.name} built (approach: {creator.approach}).
+Roast {creator.name}'s HTML in ONE short sentence (under 15 words). Be specific about their actual code. Stay in character. English only. No quotes or markdown.
 
-Here's their HTML code:
-```html
-{html_content[:3000]}
-```
-
-Write ONE sharp, in-character roast of their work. Be specific about what you actually see in their code.
-Reference real things like their file size, CSS choices, structure, etc.
-Keep it to 1-2 sentences max. Be savage but funny. No asterisks or markdown."""
+Their code:
+{html_content[:2000]}"""
 
         response = self._llm_generate(prompt)
-        return response or f"{creator.name}'s work is... I've seen better."
+        return response.strip('"\'') if response else f"{creator.name}'s work is mid."
 
     def _generate_defense(self, creator: Competitor, critics: list, html_content: str) -> str:
         """Use Claude to generate a dynamic defense of the creator's work."""
         critic_names = " and ".join(c.name for c in critics)
-        prompt = f"""You are {creator.name}, an AI coding agent with this personality: {creator.approach}
+        prompt = f"""You are {creator.name}. Personality: {creator.approach}
 
-{critic_names} just roasted your website. Here's what you built:
-```html
-{html_content[:3000]}
-```
+{critic_names} roasted you. Defend your work in ONE short sentence (under 15 words). Reference your actual code. Stay in character. English only. No quotes or markdown.
 
-Write ONE passionate defense of your work, then counter-attack their approaches.
-Be specific about what makes YOUR approach actually great.
-Keep it to 1-2 sentences. In character. No asterisks or markdown."""
+Your code:
+{html_content[:2000]}"""
 
         response = self._llm_generate(prompt)
-        return response or "Whatever, my approach was clearly superior!"
+        return response.strip('"\'') if response else "My approach was clearly superior!"
 
     def commentary_round(self, results: dict):
         """Post-battle commentary where agents critique each other's actual work."""
@@ -529,9 +519,9 @@ Keep it to 1-2 sentences. In character. No asterisks or markdown."""
             print(f"\n{creator_competitor.color}📺 Reviewing {creator_competitor.name}'s work...\033[0m\n")
 
             # Announce review
-            announce = f"Alright chat, let's check out what {creator_competitor.name} built."
+            announce = f"Let's see what {creator_competitor.name} built!"
             self.queue_speech(announce, creator_competitor)
-            time.sleep(3)
+            time.sleep(2)
 
             # Other two agents critique (in parallel for speed)
             critics = [c for c in COMPETITORS if c.name != creator_competitor.name]
@@ -551,13 +541,12 @@ Keep it to 1-2 sentences. In character. No asterisks or markdown."""
 
             # Speak critiques
             for critic in critics:
-                critique = critiques.get(critic.name, f"{creator_competitor.name}'s work is... something.")
+                critique = critiques.get(critic.name, f"{creator_competitor.name}'s work is mid.")
                 print(f"{critic.color}[{critic.name}] 💬 {critique}\033[0m")
                 self.queue_speech(critique, critic)
-                time.sleep(4)
+                time.sleep(3)
 
             # Creator defends
-            time.sleep(1)
             defense = self._generate_defense(creator_competitor, critics, creator_html)
             print(f"{creator_competitor.color}[{creator_competitor.name}] 🛡️  {defense}\033[0m")
             self.queue_speech(defense, creator_competitor)
@@ -569,7 +558,7 @@ Keep it to 1-2 sentences. In character. No asterisks or markdown."""
                 counter = self._generate_critique(creator_competitor, target_critic, html_contents[target_critic.name])
                 print(f"{creator_competitor.color}[{creator_competitor.name}] 💥 {counter}\033[0m")
                 self.queue_speech(counter, creator_competitor)
-                time.sleep(4)
+                time.sleep(3)
 
         print("\n" + "=" * 60)
         print("🎬 Commentary complete! Final results above! 🎬")
