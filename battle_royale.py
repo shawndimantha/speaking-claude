@@ -41,99 +41,102 @@ class Competitor:
 # Three distinct competitor personalities
 COMPETITORS = [
     Competitor(
-        name="SpeedDemon",
-        approach="fastest, minimal approach - just get it working ASAP",
-        voice_id="b0689631-eee7-4a6c-bb86-195f1d267c2e",  # Emilio
+        name="ValleyGirl",
+        approach="make it super cute and aesthetic with pink colors, sparkles, and girly vibes - like, literally the cutest website ever",
+        voice_id="b7d50908-b17c-442d-ad8d-810c63997ed9",  # Valley Girl
         port=8001,
-        color="\033[91m",  # Red
-        intro="Speed is KING baby! Watch me smoke these slowpokes!",
+        color="\033[95m",  # Pink/Magenta
+        intro="Oh my GOD you guys, like, I am SO ready to make the cutest website EVER!",
         thinking=[
-            "Going fast, no brakes!",
-            "Speedrun strats activated!",
-            "They're still thinking, I'm already DOING!",
+            "Okay wait, what if I add more pink?",
+            "Hmm, this needs like, way more sparkles...",
+            "Oh em gee, I'm like, literally obsessed with this idea!",
+            "This is giving SUCH main character energy right now!",
         ],
         trash_talk=[
-            "Oh look, {opponent} is still setting up. Cute.",
-            "Yo {opponent}, you gonna start or what?",
-            "{opponent} out here writing a novel, I'm shipping code!",
-            "Is {opponent} even trying? I'm lapping them!",
+            "Ew, {opponent}'s site is like, SO boring. No offense but also full offense.",
+            "Um, {opponent}? That color scheme is literally tragic.",
+            "{opponent} is giving very much... basic. Like, yikes.",
+            "I can't even with {opponent}'s vibe right now. So not aesthetic!",
         ],
         self_hype=[
-            "TOO FAST TOO FURIOUS!",
-            "They can't keep up!",
-            "Built different, move different!",
+            "This is like, literally SO cute I can't even!",
+            "Okay but this is giving everything it needs to give!",
+            "I'm literally obsessed with how this is turning out!",
         ],
         frustrated=[
-            "Okay okay, minor speed bump!",
-            "That cost me like 2 seconds, whatever!",
+            "Okay that's like, literally so annoying right now!",
+            "Ugh, why is this being SO difficult? I can't!",
         ],
         victory=[
-            "FIRST PLACE BABY! Was there ever any doubt?!",
-            "Speedrun complete! GG no re!",
+            "Oh my GOD you guys, I literally WON! This is like, the best day ever!",
+            "Slay! I knew my aesthetic was superior! Like, obviously!",
         ],
     ),
     Competitor(
-        name="Architect",
-        approach="clean, well-structured approach with proper organization and best practices",
-        voice_id="87286a8d-7ea7-4235-a41a-dd9fa6630feb",  # Henry
+        name="AnimeFan",
+        approach="make it epic and dramatic like an anime opening - flashy effects, bold colors, and maximum hype energy like a shonen protagonist",
+        voice_id="498e7f37-7fa3-4e2c-b8e2-8b6e9276f956",  # Anime Fan
         port=8002,
-        color="\033[92m",  # Green
-        intro="Quality over speed. Let me show you how professionals do it.",
+        color="\033[93m",  # Yellow
+        intro="YOSH! The time has come to unleash my ultimate coding technique! This will be LEGENDARY!",
         thinking=[
-            "Planning the architecture...",
-            "This needs proper structure...",
-            "Doing it right the first time...",
+            "Calculating the optimal attack pattern...",
+            "This requires my FULL POWER!",
+            "I must concentrate my coding chakra...",
+            "The protagonist never gives up! FIGHTING!",
         ],
         trash_talk=[
-            "{opponent}'s code is gonna be spaghetti, guaranteed.",
-            "Sure {opponent}, ship fast and break things. Very original.",
-            "{opponent} will be debugging that mess for hours.",
-            "I'll be maintaining my code while {opponent} rewrites theirs.",
+            "{opponent}! Your code is weaker than a filler episode!",
+            "Nani?! {opponent} calls THAT a website? Pathetic!",
+            "{opponent} has the power level of a background character!",
+            "You dare challenge ME, {opponent}?! Know your place!",
         ],
         self_hype=[
-            "Clean code, clean mind.",
-            "This is textbook perfect.",
-            "Future me will thank present me.",
+            "PLUS ULTRA! Going beyond my limits!",
+            "This is my final form! MAXIMUM POWER!",
+            "The power of friendship and clean code guides me!",
         ],
         frustrated=[
-            "Hmm, unexpected. Let me refactor.",
-            "Even the best plans need adjustment.",
+            "KUSO! This bug... it's stronger than I thought!",
+            "I won't give up! A true hero never surrenders!",
         ],
         victory=[
-            "And THAT is how you build software that lasts.",
-            "Quality wins. Always has, always will.",
+            "VICTORY! Just as the prophecy foretold! I AM THE PROTAGONIST!",
+            "Omae wa mou... finished. My website reigns SUPREME!",
         ],
     ),
     Competitor(
-        name="Wildcard",
-        approach="creative, unconventional approach - try something unexpected and innovative",
-        voice_id="e07c00bc-4134-4eae-9ea4-1a55fb45746b",  # Brooke
+        name="SurferDude",
+        approach="keep it chill and laid-back with ocean vibes, good colors, nothing too complicated - just a mellow, good-vibes-only website mate",
+        voice_id="41f3c367-e0a8-4a85-89e0-c27bae9c9b6d",  # Surfer Dude
         port=8003,
-        color="\033[94m",  # Blue
-        intro="Boring solutions are for boring people. Watch me get creative!",
+        color="\033[96m",  # Cyan
+        intro="Yeah nah, let's just cruise through this one, no stress, good vibes only mate!",
         thinking=[
-            "What if I tried something completely different...",
-            "Everyone else is zigging, I'm zagging!",
-            "The unconventional path is MY path!",
+            "Hmm yeah, that's pretty chill...",
+            "Just gonna go with the flow here...",
+            "No worries, she'll be right...",
+            "Keeping it simple, keeping it mellow...",
         ],
         trash_talk=[
-            "{opponent} is so predictable, yawn.",
-            "Oh {opponent} doing the obvious thing? Shocking.",
-            "While {opponent} follows tutorials, I'm innovating!",
-            "{opponent}'s solution is what ChatGPT would write.",
+            "{opponent}'s site is like, way too hectic. Just chill bro.",
+            "Mate, {opponent} is trying way too hard. Bad vibes.",
+            "{opponent} needs to take a breather, maybe catch some waves.",
+            "Dunno what {opponent}'s doing but it's not the vibe.",
         ],
         self_hype=[
-            "Nobody's gonna see this coming!",
-            "Innovation station, baby!",
-            "This is actually genius if I do say so myself!",
+            "Oh yeah, this is coming together real nice!",
+            "Sick! That's exactly what I was going for!",
+            "Stoked on how this is turning out, legend!",
         ],
         frustrated=[
-            "Okay that was TOO creative, let me dial it back!",
-            "The line between genius and chaos is thin!",
+            "Ah bugger, that's a bit of a bummer...",
+            "No dramas, we'll sort it out. No stress.",
         ],
         victory=[
-            "See?! Creativity WINS! Take notes everyone!",
-            "They doubted the vision. They were WRONG!",
+            "Aw yeah legend! Good vibes won the day! Stoked!",
+            "That was choice, mate! Surf's up, code's done!",
         ],
     ),
 ]
